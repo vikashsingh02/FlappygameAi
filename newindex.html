@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>flappybird game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>flappybird </h1>
+    <canvas id="canva" height="800" width="800"></canvas>
+   <script>
+     let canvas = document.getElementById("canva");
+     let ctx = canvas.getContext("2d");
+     let y=(800 - 60) / 2; // This centers the bird vertically
+     let velocity=0;
+     let acc = 2;
+
+
+     let gameOver = false;
+     
+        let pipeX=800;
+        let pipWidth=90;
+        let pipeGapY=200;
+        let gapHeight=200;
+        let pipeSpeed=2;
+
+     document.onkeydown = function(){
+        velocity=-12;
+     }
+
+     function gameLoop(){
+
+      if (gameOver) return;
+          velocity=velocity+0.33*acc; 
+          
+           y=y+velocity * 0.33;
+              y = Math.max(0, Math.min(y, 800 - 60)); 
+                ctx.clearRect(0,0,800,800);    
+                ctx.beginPath(); 
+                ctx.rect(20,y,80,60);  //left top height width
+                ctx.fill();
+                ctx.closePath();
+
+
+
+                    
+
+           
+        pipeX=pipeX-pipeSpeed;
+
+      if(pipeX + pipWidth < 0){
+        pipeX=800;
+        pipeGapY=Math.random()*(800-gapHeight); 
+      }
+    ctx.beginPath(); 
+    ctx.rect(pipeX,0,pipWidth,pipeGapY);  //left top  width height 
+    ctx.fill();
+    ctx.closePath();
+  
+    ctx.beginPath(); 
+ctx.rect(pipeX,pipeGapY + gapHeight,pipWidth,800 - (pipeGapY + gapHeight  ));   
+ ctx.fill();
+    ctx.closePath();
+
+    checkCollision();
+
+
+    requestAnimationFrame(gameLoop);
+   };
+
+document.onkeydown = function(){
+  if(gameOver){
+    location.reload();
+  } else {
+    velocity = -12;
+  }
+}
+   function checkCollision(){
+     const birdX = 20;
+  const birdY = y;
+  const birdWidth = 80;
+  const birdHeight = 60;
+
+  const collideTop = birdX + birdWidth > pipeX  && birdX < pipeX + pipWidth && birdY < pipeGapY;
+  const collideBottom = birdX + birdWidth > pipeX && birdX < pipeX + pipWidth && birdY + birdHeight > pipeGapY + gapHeight;
+    const outOfBounds = birdY <= 0 || birdY + birdHeight >= 800;
+  if (collideTop || collideBottom || outOfBounds) {
+    gameOver = true;
+    if (gameOver) {
+  ctx.fillStyle = "red";
+  ctx.font = "48px sans-serif";
+  ctx.fillText("Game Over", 300, 400);
+   ctx.fillText("Press Enter to Restart", 270, 460);
+  return;
+}
+
+
+  }
+}
+
+
+   
+          
+     gameLoop();
+
+   </script> 
+</body>
+</html>
